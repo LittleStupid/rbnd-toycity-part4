@@ -29,19 +29,99 @@ class Product < Udacidata
     "id:" + @id.to_s + " price:" + @price.to_s + "brand: " + @brand.to_s + "name : " + @name.to_s
   end
 
-  def self.first()
+  def self.first( num = nil)
     file = File.dirname(__FILE__) + "/../data/data.csv"
-    data = File.exist?(file) ? CSV.read(file).drop(1).first : nil
 
-    if( data == nil )
-      return nil
+    if( num != nil )
+      data = File.exist?(file) ? CSV.read(file).drop(1).first(num) : nil
+
+      if( data.empty? )
+        return nil
+      end
+
+      data.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
+                                  brand: d[@@brand_idx],name: d[@@name_idx] )
+               }
+
+    else
+      data = File.exist?(file) ? CSV.read(file).drop(1).first : nil
+
+      if( data == nil )
+        return nil
+      end
+
+      Product.new( id: data[@@id_idx],
+                                    price: data[@@price_idx],
+                                    brand: data[@@brand_idx],
+                                    name: data[@@name_idx] )
     end
+  end
+
+  def self.last( num = nil)
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+
+    if( num != nil )
+      data = File.exist?(file) ? CSV.read(file).drop(1).last(num) : nil
+
+      if( data.empty? )
+        return nil
+      end
+
+      data.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
+                                  brand: d[@@brand_idx],name: d[@@name_idx] )
+               }
+
+    else
+      data = File.exist?(file) ? CSV.read(file).drop(1).last : nil
+
+      if( data == nil )
+        return nil
+      end
+
+      Product.new( id: data[@@id_idx],
+                                    price: data[@@price_idx],
+                                    brand: data[@@brand_idx],
+                                    name: data[@@name_idx] )
+    end
+  end
+
+  def self.find( id )
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+    data = File.exist?(file) ? CSV.read(file).drop(1).find{ |item| item[0].to_i == id } : nil
 
     Product.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
+
   end
+
+  def self.destroy( id )
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+
+    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
+    if( data_base == nil )
+      return nil
+    end
+
+    deleted_data = data_base.find{ |item| item[0].to_i == id }
+    datas = data_base.select{ |item| item[0].to_i != id }
+
+    @data_path = File.dirname(__FILE__) + "/../data/data.csv"
+    CSV.open(@data_path, "wb") do |csv|
+      csv << ["id", "brand", "product", "price"]
+    end
+
+    datas.each do |data|
+      create( price: data[@@price_idx],brand: data[@@brand_idx],name: data[@@name_idx] )
+    end
+
+    Product.new( id: deleted_data[@@id_idx],
+                                  price: deleted_data[@@price_idx],
+                                  brand: deleted_data[@@brand_idx],
+                                  name: deleted_data[@@name_idx] )
+  end
+
 
   def self.is_title_data( data )
     data[@@id_idx] == "id"
