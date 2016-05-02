@@ -1,2 +1,6 @@
 
 data/data.csv
+
+*.csv
+
+data/data.csv
