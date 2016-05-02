@@ -122,6 +122,60 @@ class Product < Udacidata
                                   name: deleted_data[@@name_idx] )
   end
 
+  def self.find_by_brand( brand )
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+
+    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
+    if( data_base == nil )
+      return nil
+    end
+
+    data = data_base.find{ |item| item[@@brand_idx] == brand }
+
+    Product.new( id: data[@@id_idx],
+                                  price: data[@@price_idx],
+                                  brand: data[@@brand_idx],
+                                  name: data[@@name_idx] )
+  end
+
+  def self.find_by_name( name )
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+
+    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
+    if( data_base == nil )
+      return nil
+    end
+
+    data = data_base.find{ |item| item[@@name_idx] == name }
+
+    Product.new( id: data[@@id_idx],
+                                  price: data[@@price_idx],
+                                  brand: data[@@brand_idx],
+                                  name: data[@@name_idx] )
+  end
+
+  def self.where( options={} )
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+
+    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
+    if( data_base == nil )
+      return nil
+    end
+
+    datas = data_base.find_all do |item|
+      if( options[:name] != nil )
+        item[@@name_idx] == options[:name]
+      end
+
+      if( options[:brand] != nil )
+        item[@@brand_idx] == options[:brand]
+      end
+    end
+
+    datas.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
+                                brand: d[@@brand_idx],name: d[@@name_idx] )}
+
+  end
 
   def self.is_title_data( data )
     data[@@id_idx] == "id"
