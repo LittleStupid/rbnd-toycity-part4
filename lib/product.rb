@@ -25,9 +25,13 @@ class Product < Udacidata
     product_array
   end
 
-  def self.first
+  def to_s
+    "id:" + @id.to_s + " price:" + @price.to_s + "brand: " + @brand.to_s + "name : " + @name.to_s
+  end
+
+  def self.first()
     file = File.dirname(__FILE__) + "/../data/data.csv"
-    data = File.exist?(file) ? CSV.read(file).first : nil
+    data = File.exist?(file) ? CSV.read(file).drop(1).first : nil
 
     if( data == nil )
       return nil
@@ -37,7 +41,6 @@ class Product < Udacidata
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
-
   end
 
   def self.is_title_data( data )
@@ -49,11 +52,9 @@ class Product < Udacidata
 
     data_base = CSV.read( @data_path )
 
-
     # If the object's data is already in the database
     # create the object
     # return the object
-
     exsit_data = data_base.find{ |item| item[0] == attributes[:id] }
     if( exsit_data != nil )
       puts exsit_data
