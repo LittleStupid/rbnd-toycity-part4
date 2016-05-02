@@ -1,7 +1,7 @@
 require_relative 'udacidata'
 
 class Product < Udacidata
-  attr_reader :id, :price, :brand, :name
+  attr_accessor :id, :price, :brand, :name
 
   @@id_idx = 0
   @@brand_idx = 1
@@ -107,10 +107,10 @@ class Product < Udacidata
     deleted_data = data_base.find{ |item| item[0].to_i == id }
     datas = data_base.select{ |item| item[0].to_i != id }
 
-    @data_path = File.dirname(__FILE__) + "/../data/data.csv"
-    CSV.open(@data_path, "wb") do |csv|
-      csv << ["id", "brand", "product", "price"]
-    end
+    #@data_path = File.dirname(__FILE__) + "/../data/data.csv"
+    #CSV.open(@data_path, "wb") do |csv|
+    #  csv << ["id", "brand", "product", "price"]
+    #end
 
     datas.each do |data|
       create( price: data[@@price_idx],brand: data[@@brand_idx],name: data[@@name_idx] )
@@ -175,6 +175,37 @@ class Product < Udacidata
     datas.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
                                 brand: d[@@brand_idx],name: d[@@name_idx] )}
 
+  end
+
+  def update( options = {} )
+    Product.create( options )
+=begin
+    products = Product.all
+
+    if( options[:price] != nil)
+      @price = options[:price]
+      products.map! do |product|
+        if( product.id == @id )
+          product.price = options[:price]
+        else
+          product = product
+        end
+      end
+    end
+
+    puts "000000"
+    puts products
+    puts "000000"
+
+    if( options[:brand] != nil )
+      @brand = options[:brand]
+      products.map! do |product|
+        if( product.id == @id )
+          product.brand = options[:brand]
+        end
+      end
+    end
+=end
   end
 
   def self.is_title_data( data )
