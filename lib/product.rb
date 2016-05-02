@@ -3,15 +3,53 @@ require_relative 'udacidata'
 class Product < Udacidata
   attr_reader :id, :price, :brand, :name
 
+  @@id_idx = 0
+  @@brand_idx = 1
+  @@name_idx = 2
+  @@price_idx = 3
+
+  def self.all
+    product_array = Array.new
+
+    data_path = File.dirname(__FILE__) + "/../data/data.csv"
+    data_base = CSV.read( data_path )
+    data_base.each do |data|
+      if( false == is_title_data(data) )
+        product_array << Product.new( id: data[@@id_idx],
+                                      price: data[@@price_idx],
+                                      brand: data[@@brand_idx],
+                                      name: data[@@name_idx] )
+      end
+    end
+
+    product_array
+  end
+
+  def self.first
+    file = File.dirname(__FILE__) + "/../data/data.csv"
+    data = File.exist?(file) ? CSV.read(file).first : nil
+
+    if( data == nil )
+      return nil
+    end
+
+    Product.new( id: data[@@id_idx],
+                                  price: data[@@price_idx],
+                                  brand: data[@@brand_idx],
+                                  name: data[@@name_idx] )
+
+  end
+
+  def self.is_title_data( data )
+    data[@@id_idx] == "id"
+  end
+
   def self.create( attributes = nil )
     @data_path = File.dirname(__FILE__) + "/../data/data.csv"
 
     data_base = CSV.read( @data_path )
 
-    id_idx = 0
-    brand_idx = 1
-    name_idx = 2
-    price_idx = 3
+
     # If the object's data is already in the database
     # create the object
     # return the object
@@ -19,10 +57,10 @@ class Product < Udacidata
     exsit_data = data_base.find{ |item| item[0] == attributes[:id] }
     if( exsit_data != nil )
       puts exsit_data
-      return Product.new( id: exsit_data[id_idx],
-                          price: exsit_data[price_idx],
-                          brand: exsit_data[brand_idx],
-                          name: exsit_data[name_idx] )
+      return Product.new( id: exsit_data[@@id_idx],
+                          price: exsit_data[@@price_idx],
+                          brand: exsit_data[@@brand_idx],
+                          name: exsit_data[@@name_idx] )
     end
 
     # If the object's data is not in the database
