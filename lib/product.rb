@@ -89,6 +89,9 @@ class Product < Udacidata
     file = File.dirname(__FILE__) + "/../data/data.csv"
     data = File.exist?(file) ? CSV.read(file).drop(1).find{ |item| item[0].to_i == id } : nil
 
+    if( data == nil )
+      raise ProductNotFoundError, "Cannot find this item"
+    end
     Product.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
@@ -112,6 +115,10 @@ class Product < Udacidata
     end
 
     deleted_data = data_base.find{ |item| item[0].to_i == id }
+    if( deleted_data == nil )
+      raise ProductNotFoundError, "Cannot find this item"
+    end
+
     datas = data_base.select{ |item| item[0].to_i != id }
 
     reset_file
