@@ -96,6 +96,13 @@ class Product < Udacidata
 
   end
 
+  def self.reset_file()
+    @data_path = File.dirname(__FILE__) + "/../data/data.csv"
+    CSV.open(@data_path, "wb") do |csv|
+      csv << ["id", "brand", "product", "price"]
+    end
+  end
+
   def self.destroy( id )
     file = File.dirname(__FILE__) + "/../data/data.csv"
 
@@ -107,10 +114,7 @@ class Product < Udacidata
     deleted_data = data_base.find{ |item| item[0].to_i == id }
     datas = data_base.select{ |item| item[0].to_i != id }
 
-    #@data_path = File.dirname(__FILE__) + "/../data/data.csv"
-    #CSV.open(@data_path, "wb") do |csv|
-    #  csv << ["id", "brand", "product", "price"]
-    #end
+    reset_file
 
     datas.each do |data|
       create( price: data[@@price_idx],brand: data[@@brand_idx],name: data[@@name_idx] )
@@ -178,34 +182,29 @@ class Product < Udacidata
   end
 
   def update( options = {} )
-    Product.create( options )
-=begin
+    #Product.create( options )
     products = Product.all
+    product = products.find { |product| product.id == @id }
+
+    if( product == nil )
+      return nil
+    end
 
     if( options[:price] != nil)
-      @price = options[:price]
-      products.map! do |product|
-        if( product.id == @id )
-          product.price = options[:price]
-        else
-          product = product
-        end
-      end
+      product.price = options[:price]
     end
-
-    puts "000000"
-    puts products
-    puts "000000"
 
     if( options[:brand] != nil )
-      @brand = options[:brand]
-      products.map! do |product|
-        if( product.id == @id )
-          product.brand = options[:brand]
-        end
-      end
+      product.brand = options[:brand]
     end
-=end
+
+    Product.reset_file
+
+    products.each do |product|
+      Product.create( price: product.price, brand: product.brand, name: product.name )
+    end
+
+    product
   end
 
   def self.is_title_data( data )
