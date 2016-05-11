@@ -167,11 +167,12 @@ class Product < Udacidata
     end
 
     datas = data_base.find_all do |item|
-      if( options[:name] != nil )
+      if( ( options[:name] != nil ) && ( options[:brand] != nil ) )
         item[@@name_idx] == options[:name]
-      end
-
-      if( options[:brand] != nil )
+        item[@@brand_idx] == options[:brand]
+      elsif ( options[:name] != nil )
+        item[@@name_idx] == options[:name]
+      elsif ( options[:brand] != nil )
         item[@@brand_idx] == options[:brand]
       end
     end
