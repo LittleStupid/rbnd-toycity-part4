@@ -1,5 +1,6 @@
 module Analyzable
   # Your code goes here!
+=begin
   def count_by_brand( products )
     tbl = Hash.new
 
@@ -29,6 +30,7 @@ module Analyzable
     end
     tbl
   end
+=end
 
   def print_report( products )
     tbl_by_brand = count_by_brand( products )
@@ -43,7 +45,7 @@ module Analyzable
     end
 
     puts ""
-    
+
     puts "Inventory by Name:"
     #puts tbl_by_name
     tbl_by_name.each do |k,v|
@@ -60,4 +62,33 @@ module Analyzable
     ( total_price / num ).round(2)
   end
 
+  ###################################################
+  def self.gen_count_methods( *categories )
+    categories.each do |category|
+      count_method = %Q{
+        def count_by_#{category}( products )
+
+          tbl = Hash.new
+
+          products.each do |product|
+            #{category} = product.#{category}
+
+            if( tbl.has_key?( #{category} ) )
+              tbl[#{category}] += 1
+            else
+              tbl[#{category}] = 1
+            end
+          end
+          tbl
+
+        end
+      }
+
+      module_eval( count_method )
+    end
+  end
+  ###################################################
+
 end
+
+Analyzable.gen_count_methods( "name", "brand" )
