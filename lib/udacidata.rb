@@ -24,7 +24,7 @@ class Udacidata
     exsit_data = data_base.find{ |item| item[0] == attributes[:id] }
     if( exsit_data != nil )
       puts exsit_data
-      return Product.new( id: exsit_data[@@id_idx],
+      return self.new( id: exsit_data[@@id_idx],
                           price: exsit_data[@@price_idx],
                           brand: exsit_data[@@brand_idx],
                           name: exsit_data[@@name_idx] )
@@ -34,7 +34,7 @@ class Udacidata
     # create the object
     # save the data in the database
     # return the object
-    product = Product.new(  price: attributes[:price],
+    product = self.new(  price: attributes[:price],
                             brand: attributes[:brand],
                             name: attributes[:name] )
 
@@ -57,7 +57,7 @@ class Udacidata
         return nil
       end
 
-      data.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
+      data.map!{ |d| self.new( id: d[@@id_idx],price: d[@@price_idx],
                                   brand: d[@@brand_idx],name: d[@@name_idx] )
                }
 
@@ -68,7 +68,7 @@ class Udacidata
         return nil
       end
 
-      Product.new( id: data[@@id_idx],
+      self.new( id: data[@@id_idx],
                                     price: data[@@price_idx],
                                     brand: data[@@brand_idx],
                                     name: data[@@name_idx] )
@@ -85,7 +85,7 @@ class Udacidata
         return nil
       end
 
-      data.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
+      data.map!{ |d| self.new( id: d[@@id_idx],price: d[@@price_idx],
                                   brand: d[@@brand_idx],name: d[@@name_idx] )
                }
 
@@ -96,7 +96,7 @@ class Udacidata
         return nil
       end
 
-      Product.new( id: data[@@id_idx],
+      self.new( id: data[@@id_idx],
                                     price: data[@@price_idx],
                                     brand: data[@@brand_idx],
                                     name: data[@@name_idx] )
@@ -110,7 +110,7 @@ class Udacidata
     if( data == nil )
       raise ProductNotFoundError, "Cannot find this item"
     end
-    Product.new( id: data[@@id_idx],
+    self.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
@@ -145,7 +145,7 @@ class Udacidata
       create( price: data[@@price_idx],brand: data[@@brand_idx],name: data[@@name_idx] )
     end
 
-    Product.new( id: deleted_data[@@id_idx],
+    self.new( id: deleted_data[@@id_idx],
                                   price: deleted_data[@@price_idx],
                                   brand: deleted_data[@@brand_idx],
                                   name: deleted_data[@@name_idx] )
@@ -161,7 +161,7 @@ class Udacidata
 
     data = data_base.find{ |item| item[@@brand_idx] == brand }
 
-    Product.new( id: data[@@id_idx],
+    self.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
@@ -177,7 +177,7 @@ class Udacidata
 
     data = data_base.find{ |item| item[@@name_idx] == name }
 
-    Product.new( id: data[@@id_idx],
+    self.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
@@ -213,7 +213,7 @@ class Udacidata
     data_base = CSV.read( data_path )
     data_base.each do |data|
       if( false == is_title_data(data) )
-        product_array << Product.new( id: data[@@id_idx],
+        product_array << self.new( id: data[@@id_idx],
                                       price: data[@@price_idx],
                                       brand: data[@@brand_idx],
                                       name: data[@@name_idx] )
