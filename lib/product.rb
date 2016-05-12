@@ -8,31 +8,7 @@ class Product < Udacidata
     "id:" + @id.to_s + " price:" + @price.to_s + "brand: " + @brand.to_s + "name : " + @name.to_s
   end
 
-    def update( options = {} )
-    #Product.create( options )
-    products = Product.all
-    product = products.find { |product| product.id == @id }
-
-    if( product == nil )
-      return nil
-    end
-
-    if( options[:price] != nil)
-      product.price = options[:price]
-    end
-
-    if( options[:brand] != nil )
-      product.brand = options[:brand]
-    end
-
-    Product.reset_file
-
-    products.each do |product|
-      Product.create( price: product.price, brand: product.brand, name: product.name )
-    end
-
-    product
-  end
+    
 
 
   def initialize(opts={})
