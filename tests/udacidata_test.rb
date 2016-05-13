@@ -48,12 +48,14 @@ class TestUdacidata < MiniTest::Test
     product = Product.first
     assert_instance_of(Product, product)
   end
+
   #
   def test_first_method_returns_correct_product
     product = Product.first
     data = CSV.read(@data_path).drop(1)
     assert_equal(data.first[0].to_i, product.id)
   end
+
   #
   def test_first_n_returns_array
     array_of_products = Product.first(3)
@@ -143,7 +145,7 @@ class TestUdacidata < MiniTest::Test
 
     assert_equal("Nyan Cat", product.name)
   end
-=begin
+
   #
   def test_where_method_returns_array_type
     Product.create(brand: "Lego", name: "Sticky Notes", price: 34.00)
@@ -174,11 +176,11 @@ class TestUdacidata < MiniTest::Test
     assert_equal(diff.include?("Hello World"), true)
     assert_equal(database_before.size, database_after.size)
   end
-=end
+
   # The "teardown" method always runs after the tests are done
   # "teardown" will delete the test database when tests are done
   def teardown
-    #File.delete(@data_path)
+    File.delete(@data_path)
   end
 
 end

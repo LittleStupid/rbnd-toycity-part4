@@ -15,7 +15,7 @@ class Module
 		end
 	end
 
-	Module.create_finder_methods( "brand", "id" )
+	#Module.create_finder_methods( "brand", "id" )
 	#Module.create_finder_methods( "name", "brand" )
 end
 
