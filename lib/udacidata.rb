@@ -10,15 +10,15 @@ class Udacidata
   @@price_idx = 3
 
   def self.all
-    product_array = Array.new
+    obj_array = Array.new
 
     data_path = File.dirname(__FILE__) + "/../data/data.csv"
     CSV.foreach( data_path, headers: true ) do |data|
-      product_array << self.new( id: data["id"], price: data["price"],
+      obj_array << self.new( id: data["id"], price: data["price"],
                                  brand: data["brand"], name: data["product"] )
     end
 
-    product_array
+    obj_array
   end
 
   def self.create( attributes = nil )
@@ -53,46 +53,12 @@ class Udacidata
     num ? all.first(num) : all.first
   end
 
-  def self.last( num = nil)
-    file = File.dirname(__FILE__) + "/../data/data.csv"
-
-    if( num != nil )
-      data = File.exist?(file) ? CSV.read(file).drop(1).last(num) : nil
-
-      if( data.empty? )
-        return nil
-      end
-
-      data.map!{ |d| self.new( id: d[@@id_idx],price: d[@@price_idx],
-                                  brand: d[@@brand_idx],name: d[@@name_idx] )
-               }
-
-    else
-      data = File.exist?(file) ? CSV.read(file).drop(1).last : nil
-
-      if( data == nil )
-        return nil
-      end
-
-      self.new( id: data[@@id_idx],
-                                    price: data[@@price_idx],
-                                    brand: data[@@brand_idx],
-                                    name: data[@@name_idx] )
-    end
+  def self.last( num = nil )
+    num ? all.last(num) : all.last
   end
 
   def self.find( id )
-    file = File.dirname(__FILE__) + "/../data/data.csv"
-    data = File.exist?(file) ? CSV.read(file).drop(1).find{ |item| item[0].to_i == id } : nil
-
-    if( data == nil )
-      raise ProductNotFoundError, "Cannot find this item"
-    end
-    self.new( id: data[@@id_idx],
-                                  price: data[@@price_idx],
-                                  brand: data[@@brand_idx],
-                                  name: data[@@name_idx] )
-
+    all.find { |obj| obj.id == id }
   end
 
   def self.reset_file()
@@ -103,34 +69,25 @@ class Udacidata
   end
 
   def self.destroy( id )
+    del_obj = find( id )
+
+    if( del_obj == nil )
+      return
+    end
+
     file = File.dirname(__FILE__) + "/../data/data.csv"
-
-    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
-    if( data_base == nil )
-      return nil
+    tbl = CSV.table( file )
+    tbl.delete_if do |data|
+      data["id"] == id
     end
 
-
-    #deleted_data = data_base.find{ |item| item[0].to_i == id }
-    #if( deleted_data == nil )
-    #  raise ProductNotFoundError, "Cannot find this item"
-    #end
-
-    #deleted_data = find_by_id( id.to_s )
-    deleted_data = find( id )
-    datas = data_base.select{ |item| item[0].to_i != id }
-
-    reset_file
-
-    datas.each do |data|
-      create( brand: data[@@brand_idx],name: data[@@name_idx] )
+    CSV.open(@data_path, "wb") do |csv|
+      tbl.each do |row|
+        csv << row
+      end
     end
 
-    deleted_data
-    #self.new( id: deleted_data[@@id_idx],
-    #                              price: deleted_data[@@price_idx],
-    #                              brand: deleted_data[@@brand_idx],
-    #                              name: deleted_data[@@name_idx] )
+    del_obj
   end
 
   def self.find_by_brand( brand )
