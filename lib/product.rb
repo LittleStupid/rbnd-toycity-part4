@@ -8,7 +8,7 @@ class Product < Udacidata
     "id:" + @id.to_s + " price:" + @price.to_s + "brand: " + @brand.to_s + "name : " + @name.to_s
   end
 
-    
+
 
 
   def initialize(opts={})

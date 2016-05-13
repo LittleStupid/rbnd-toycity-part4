@@ -2,7 +2,7 @@ require_relative 'find_by'
 require_relative 'errors'
 require 'csv'
 
-class Udacidata
+class Udacidata < Module
   # Your code goes here!
   @@id_idx = 0
   @@brand_idx = 1
@@ -23,20 +23,14 @@ class Udacidata
     # return the object
     exsit_data = data_base.find{ |item| item[0] == attributes[:id] }
     if( exsit_data != nil )
-      puts exsit_data
-      return self.new( id: exsit_data[@@id_idx],
-                          price: exsit_data[@@price_idx],
-                          brand: exsit_data[@@brand_idx],
-                          name: exsit_data[@@name_idx] )
+      return Product.new( attributes )
     end
 
     # If the object's data is not in the database
     # create the object
     # save the data in the database
     # return the object
-    product = self.new(  price: attributes[:price],
-                            brand: attributes[:brand],
-                            name: attributes[:name] )
+    product = Product.new( attributes )
 
     CSV.open(@data_path, "a+") do |csv|
       csv << [ product.id, attributes[:brand], attributes[:name], attributes[:price] ]
@@ -57,7 +51,7 @@ class Udacidata
         return nil
       end
 
-      data.map!{ |d| self.new( id: d[@@id_idx],price: d[@@price_idx],
+      data.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
                                   brand: d[@@brand_idx],name: d[@@name_idx] )
                }
 
@@ -68,7 +62,7 @@ class Udacidata
         return nil
       end
 
-      self.new( id: data[@@id_idx],
+      Product.new( id: data[@@id_idx],
                                     price: data[@@price_idx],
                                     brand: data[@@brand_idx],
                                     name: data[@@name_idx] )
@@ -85,7 +79,7 @@ class Udacidata
         return nil
       end
 
-      data.map!{ |d| self.new( id: d[@@id_idx],price: d[@@price_idx],
+      data.map!{ |d| Product.new( id: d[@@id_idx],price: d[@@price_idx],
                                   brand: d[@@brand_idx],name: d[@@name_idx] )
                }
 
@@ -96,7 +90,7 @@ class Udacidata
         return nil
       end
 
-      self.new( id: data[@@id_idx],
+      Product.new( id: data[@@id_idx],
                                     price: data[@@price_idx],
                                     brand: data[@@brand_idx],
                                     name: data[@@name_idx] )
@@ -110,7 +104,7 @@ class Udacidata
     if( data == nil )
       raise ProductNotFoundError, "Cannot find this item"
     end
-    self.new( id: data[@@id_idx],
+    Product.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
@@ -132,25 +126,29 @@ class Udacidata
       return nil
     end
 
-    deleted_data = data_base.find{ |item| item[0].to_i == id }
-    if( deleted_data == nil )
-      raise ProductNotFoundError, "Cannot find this item"
-    end
 
+    #deleted_data = data_base.find{ |item| item[0].to_i == id }
+    #if( deleted_data == nil )
+    #  raise ProductNotFoundError, "Cannot find this item"
+    #end
+
+    deleted_data = find_by_id( id.to_s )
     datas = data_base.select{ |item| item[0].to_i != id }
 
     reset_file
 
     datas.each do |data|
-      create( price: data[@@price_idx],brand: data[@@brand_idx],name: data[@@name_idx] )
+      create( brand: data[@@brand_idx],name: data[@@name_idx] )
     end
 
-    self.new( id: deleted_data[@@id_idx],
-                                  price: deleted_data[@@price_idx],
-                                  brand: deleted_data[@@brand_idx],
-                                  name: deleted_data[@@name_idx] )
+    deleted_data
+    #Product.new( id: deleted_data[@@id_idx],
+    #                              price: deleted_data[@@price_idx],
+    #                              brand: deleted_data[@@brand_idx],
+    #                              name: deleted_data[@@name_idx] )
   end
 
+=begin
   def self.find_by_brand( brand )
     file = File.dirname(__FILE__) + "/../data/data.csv"
 
@@ -161,11 +159,12 @@ class Udacidata
 
     data = data_base.find{ |item| item[@@brand_idx] == brand }
 
-    self.new( id: data[@@id_idx],
+    Product.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
   end
+=end
 
   def self.find_by_name( name )
     file = File.dirname(__FILE__) + "/../data/data.csv"
@@ -177,7 +176,7 @@ class Udacidata
 
     data = data_base.find{ |item| item[@@name_idx] == name }
 
-    self.new( id: data[@@id_idx],
+    Product.new( id: data[@@id_idx],
                                   price: data[@@price_idx],
                                   brand: data[@@brand_idx],
                                   name: data[@@name_idx] )
@@ -213,7 +212,7 @@ class Udacidata
     data_base = CSV.read( data_path )
     data_base.each do |data|
       if( false == is_title_data(data) )
-        product_array << self.new( id: data[@@id_idx],
+        product_array << Product.new( id: data[@@id_idx],
                                       price: data[@@price_idx],
                                       brand: data[@@brand_idx],
                                       name: data[@@name_idx] )
