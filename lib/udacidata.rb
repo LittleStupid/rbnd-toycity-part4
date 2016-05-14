@@ -62,7 +62,7 @@ class Udacidata
       data["id"] == id
     end
 
-    CSV.open(@data_path, "wb") do |csv|
+    CSV.open(file, "wb") do |csv|
       tbl.each do |row|
         csv << row
       end
