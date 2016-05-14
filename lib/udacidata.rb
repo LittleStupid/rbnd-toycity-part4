@@ -21,34 +21,6 @@ class Udacidata
     obj_array
   end
 
-  def self.create( attributes = nil )
-    @data_path = File.dirname(__FILE__) + "/../data/data.csv"
-
-    data_base = CSV.read( @data_path )
-
-    # If the object's data is already in the database
-    # create the object
-    # return the object
-    exsit_data = data_base.find{ |item| item[0] == attributes[:id] }
-    if( exsit_data != nil )
-      return self.new( attributes )
-    end
-
-    # If the object's data is not in the database
-    # create the object
-    # save the data in the database
-    # return the object
-    product = self.new( attributes )
-
-    CSV.open(@data_path, "a+") do |csv|
-      csv << [ product.id, attributes[:brand], attributes[:name], attributes[:price] ]
-    end
-
-    return product
-
-  end
-
-
   def self.first( num = nil)
     num ? all.first(num) : all.first
   end
@@ -60,6 +32,22 @@ class Udacidata
   def self.find( id )
     all.find { |obj| obj.id == id }
   end
+
+  def self.create( attributes = nil )
+
+    obj = self.new( attributes )
+
+    if( nil == find( obj.id ) )
+      file = File.dirname(__FILE__) + "/../data/data.csv"
+      CSV.open( file, "a+" ) do |csv|
+        csv << [ obj.id, obj.brand, obj.name, obj.price ]
+      end
+    end
+
+    obj
+  end
+
+
 
   def self.reset_file()
     @data_path = File.dirname(__FILE__) + "/../data/data.csv"
