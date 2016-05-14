@@ -107,6 +107,7 @@ class TestUdacidata < MiniTest::Test
     assert_instance_of(Product, product)
   end
   #
+
   def test_destroy_method_removes_product_from_database
     before = CSV.read(@data_path).length
     Product.destroy(2)
@@ -123,11 +124,6 @@ class TestUdacidata < MiniTest::Test
   def test_find_by_brand_method_returns_first_product_with_given_brand
     Product.create(brand: "OritToys", name: "Sticky Notes", price: 34.00)
     product = Product.find_by_brand("OritToys")
-
-#    puts "********"
-#    puts product
-#    puts "********"
-
     assert_equal("OritToys", product.brand)
   end
   #

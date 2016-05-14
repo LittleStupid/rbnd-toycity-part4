@@ -49,14 +49,6 @@ class Udacidata
   end
 
 
-
-  def self.reset_file()
-    @data_path = File.dirname(__FILE__) + "/../data/data.csv"
-    CSV.open(@data_path, "wb") do |csv|
-      csv << ["id", "brand", "product", "price"]
-    end
-  end
-
   def self.destroy( id )
     del_obj = find( id )
 
@@ -79,28 +71,38 @@ class Udacidata
     del_obj
   end
 
-  def self.where( options={} )
-    file = File.dirname(__FILE__) + "/../data/data.csv"
 
-    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
-    if( data_base == nil )
+
+  def self.reset_file()
+    @data_path = File.dirname(__FILE__) + "/../data/data.csv"
+    CSV.open(@data_path, "wb") do |csv|
+      csv << ["id", "brand", "product", "price"]
+    end
+  end
+
+  def self.where( options={} )
+    if( options == nil )
       return nil
     end
 
-    datas = data_base.find_all do |item|
-      if( ( options[:name] != nil ) && ( options[:brand] != nil ) )
-        item[@@name_idx] == options[:name]
-        item[@@brand_idx] == options[:brand]
-      elsif ( options[:name] != nil )
-        item[@@name_idx] == options[:name]
-      elsif ( options[:brand] != nil )
-        item[@@brand_idx] == options[:brand]
+    objs = []
+    all.each do |obj|
+
+      found = true
+
+      options.each do |k,v|
+        if( obj.send(k) != v )
+          found = false;
+        end
+      end
+
+      if( found )
+        objs << obj
       end
     end
-
-    datas.map!{ |d| self.new( id: d[@@id_idx],price: d[@@price_idx],
-                                brand: d[@@brand_idx],name: d[@@name_idx] )}
+      objs
   end
+
 
 
   def update( options = {} )
