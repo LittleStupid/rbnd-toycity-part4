@@ -3,6 +3,7 @@ require_relative 'errors'
 require 'csv'
 
 class Udacidata
+  create_finder_methods( "name", "brand" )
   # Your code goes here!
   @@id_idx = 0
   @@brand_idx = 1
@@ -76,38 +77,6 @@ class Udacidata
     end
 
     del_obj
-  end
-
-  def self.find_by_brand( brand )
-    file = File.dirname(__FILE__) + "/../data/data.csv"
-
-    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
-    if( data_base == nil )
-      return nil
-    end
-
-    data = data_base.find{ |item| item[@@brand_idx] == brand }
-
-    self.new( id: data[@@id_idx],
-                                  price: data[@@price_idx],
-                                  brand: data[@@brand_idx],
-                                  name: data[@@name_idx] )
-  end
-
-  def self.find_by_name( name )
-    file = File.dirname(__FILE__) + "/../data/data.csv"
-
-    data_base = File.exist?(file) ? CSV.read(file).drop(1) : nil
-    if( data_base == nil )
-      return nil
-    end
-
-    data = data_base.find{ |item| item[@@name_idx] == name }
-
-    self.new( id: data[@@id_idx],
-                                  price: data[@@price_idx],
-                                  brand: data[@@brand_idx],
-                                  name: data[@@name_idx] )
   end
 
   def self.where( options={} )
