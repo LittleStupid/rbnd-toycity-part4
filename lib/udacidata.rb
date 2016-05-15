@@ -30,15 +30,25 @@ class Udacidata
     num ? all.last(num) : all.last
   end
 
+  def self.exist?( id )
+    all.find { |obj| obj.id == id } != nil
+  end
+
   def self.find( id )
-    all.find { |obj| obj.id == id }
+    result = all.find { |obj| obj.id == id }
+
+    if( result == nil )
+      raise ProductNotFoundError, "Cannot find this item"
+    end
+
+    result
   end
 
   def self.create( attributes = nil )
 
     obj = self.new( attributes )
 
-    if( nil == find( obj.id ) )
+    if( false == exist?( obj.id ) )
       file = File.dirname(__FILE__) + "/../data/data.csv"
       CSV.open( file, "a+" ) do |csv|
         csv << [ obj.id, obj.brand, obj.name, obj.price ]
@@ -58,11 +68,13 @@ class Udacidata
 
     file = File.dirname(__FILE__) + "/../data/data.csv"
     tbl = CSV.table( file )
+
     tbl.delete_if do |data|
-      data["id"] == id
+      data[:id] == id
     end
 
-    CSV.open(file, "wb") do |csv|
+    reset_file()
+    CSV.open(file, "a+") do |csv|
       tbl.each do |row|
         csv << row
       end
