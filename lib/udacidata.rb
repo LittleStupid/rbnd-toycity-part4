@@ -5,11 +5,6 @@ require 'csv'
 class Udacidata
   create_finder_methods( "name", "brand" )
   # Your code goes here!
-  @@id_idx = 0
-  @@brand_idx = 1
-  @@name_idx = 2
-  @@price_idx = 3
-
   def self.all
     obj_array = Array.new
 
