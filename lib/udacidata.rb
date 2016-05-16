@@ -114,6 +114,7 @@ class Udacidata
 
   def update( options = {} )
   #Product.create( options )
+=begin
   products = Product.all
   product = products.find { |product| product.id == @id }
 
@@ -130,12 +131,35 @@ class Udacidata
   end
 
   Product.reset_file
+=end
+  file = File.dirname(__FILE__) + "/../data/data.csv"
+  tbl = CSV.table( file )
 
-  products.each do |product|
-    Product.create( price: product.price, brand: product.brand, name: product.name )
+  tbl.each do |data|
+    if( data[:id] == id )
+      if( options[:brand] != nil )
+        data[:brand] = options[:brand]
+      end
+
+      if( options[:price] != nil )
+        data[:price] = options[:price]
+      end
+    end
   end
 
-  product
+  Udacidata.reset_file()
+  CSV.open(file, "a+") do |csv|
+    tbl.each do |row|
+      csv << row
+    end
+  end
+
+  Product.find(@id)
+  #products.each do |product|
+  #  Product.create( price: product.price, brand: product.brand, name: product.name )
+  #end
+
+  #product
 end
 
 end
